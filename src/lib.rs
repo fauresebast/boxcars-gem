@@ -63,6 +63,9 @@
 //! Boxcars will also check for replay corruption on error, but this can be configured to always
 //! check for corruption or never check.
 
+extern crate libc;
+use std::ffi::{CStr,CString};
+
 #[macro_use]
 extern crate serde;
 
@@ -84,3 +87,18 @@ mod network;
 mod parser;
 mod parsing_utils;
 mod serde_utils;
+
+use std::fs;
+
+#[no_mangle]
+pub extern fn run(filename: *const libc::c_char) -> *const libc::c_char {
+    let filename_cstr = unsafe { CStr::from_ptr(filename) };
+    let filename_str = filename_cstr.to_str().unwrap();
+    let buffer = fs::read(filename_str).unwrap();
+    let replay = ParserBuilder::new(&buffer).never_parse_network_data().parse().unwrap();
+    let mut buf = std::io:: BufWriter::new(Vec::new());
+    serde_json::to_writer(&mut buf, &replay).unwrap();
+    let bytes = buf.into_inner().unwrap();
+    let string = String::from_utf8(bytes).unwrap();
+    CString::new(string).unwrap().into_raw()
+}

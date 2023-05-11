@@ -11,15 +11,19 @@ categories = ["parsing"]
 version = "0.9.9"
 include = ["src/**/*.rs", "Cargo.toml", "build.rs"]
 
+[lib]
+crate-type=["cdylib"]
+
 [dependencies]
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 encoding_rs = "0.8"
 phf = { version = "0.11", features = ["macros"] }
 fnv = "1.0"
 bitter = "0.6"
+libc = "0.2.0"
 
 [dev-dependencies]
-serde_json = "1"
 criterion = "0.3"
 
 [profile.bench]
