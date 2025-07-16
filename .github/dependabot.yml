@@ -4,4 +4,4 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 0 # Set to 0 to stop notifications, default is 10
